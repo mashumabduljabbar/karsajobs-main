@@ -1,5 +1,5 @@
 deploy:
-	kubectl apply -f namespace.yaml
+	kubectl apply -f namespace.yml
 	make apply-all
 
 apply-all:
@@ -8,18 +8,18 @@ apply-all:
 	make apply-frontend
 
 apply-mongo:
-	kubectl apply -f mongodb/mongo-configmap.yaml
-	kubectl apply -f mongodb/mongo-secret.yaml
-	kubectl apply -f mongodb/mongo-pv-pvc.yaml
-	kubectl apply -f mongodb/mongo-statefulset.yaml
-	kubectl apply -f mongodb/mongo-service.yaml
+	kubectl apply -f mongodb/mongo-configmap.yml
+	kubectl apply -f mongodb/mongo-secret.yml
+	kubectl apply -f mongodb/mongo-pv-pvc.yml
+	kubectl apply -f mongodb/mongo-statefulset.yml
+	kubectl apply -f mongodb/mongo-service.yml
 
 apply-backend:
-	kubectl apply -f backend/karsajobs-service.yaml
-	kubectl apply -f backend/karsajobs-deployment.yaml
+	kubectl apply -f backend/karsajobs-service.yml
+	kubectl apply -f backend/karsajobs-deployment.yml
 
 apply-frontend:
-	kubectl apply -f frontend/karsajobs-ui-service.yaml
-	kubectl apply -f frontend/karsajobs-ui-deployment.yaml
+	kubectl apply -f frontend/karsajobs-ui-service.yml
+	kubectl apply -f frontend/karsajobs-ui-deployment.yml
 
 .PHONY: apply-mongo apply-backend apply-frontend apply-all deploy
