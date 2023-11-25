@@ -1,0 +1,60 @@
+# Versi API
+apiVersion: v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# PersistentVolume (PV) adalah sumber daya penyimpanan yang diprovisi oleh administrator
+kind: PersistentVolume
+
+metadata:
+  # Nama PV
+  name: mongo-pv
+  # Namespace PV
+  namespace: karsajobs-ns
+  # key: string value yang dapat digunakan untuk mengorganisir dan mengkategorikan (lingkup dan pilih) objek.
+  labels:
+    type: local
+
+spec:
+  # Kapasitas sumber daya PV
+  capacity:
+    # Ukuran penyimpanan
+    storage: 1Gi
+  # Cara PV akan diakses
+  accessModes:
+    - ReadWriteOnce
+  # "persistentVolumeReclaimPolicy" mendefinisikan apa yang terjadi pada persistent volume ketika dilepaskan dari klaimnya
+  persistentVolumeReclaimPolicy: Recycle
+  # storageClassName adalah nama StorageClass yang dimiliki persistent volume ini
+  storageClassName: manual
+  # Direktori pada host
+  hostPath:
+    # Path dari direktori di host
+    path: "/data/db"
+
+---
+
+# Versi API
+apiVersion: v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# PersistentVolumeClaim adalah permintaan dan klaim pengguna terhadap persistent volume
+kind: PersistentVolumeClaim
+
+metadata:
+  # Nama PV Claim
+  name: mongo-pv-claim
+  # Namespace PV Claim
+  namespace: karsajobs-ns
+
+spec:
+  # Nama StorageClass yang diperlukan oleh klaim
+  storageClassName: manual
+  # Resources mewakili sumber daya minimum yang harus dimiliki volume
+  resources:
+    # Permintaan jumlah sumber daya komputasi yang diperlukan
+    requests:
+      # Ukuran penyimpanan
+      storage: 1Gi
+  # Cara PV akan diakses
+  accessModes:
+    - ReadWriteOnce

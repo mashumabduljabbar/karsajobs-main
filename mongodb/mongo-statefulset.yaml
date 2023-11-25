@@ -1,0 +1,91 @@
+# Versi API
+apiVersion: apps/v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# StatefulSet mewakili set dari pods dengan identitas yang konsisten
+kind: StatefulSet
+
+metadata:
+  # Nama StatefulSet
+  name: mongo
+  # Namespace StatefulSet
+  namespace: karsajobs-ns
+  # Peta kunci dan nilai string yang dapat digunakan untuk mengorganisir dan mengkategorikan (lingkup dan pilih) objek. Mungkin cocok dengan pemilih kontrol replikasi dan layanan.
+  labels:
+    app: mongo
+
+spec:
+
+  # Selektor label untuk pods
+  selector:
+    matchLabels:
+      app: mongo
+
+  # Nama layanan yang mengatur StatefulSet ini
+  serviceName: mongo
+
+  # Jumlah detik minimum untuk yang harus pod yang baru dibuat siap tanpa ada dari container-nya crash agar dianggap tersedia.
+  minReadySeconds: 10
+
+  # Jumlah pods yang diinginkan. Ini adalah penunjuk untuk membedakan antara nol eksplisit dan tidak ditentukan. Default ke 1.
+  replicas: 1
+
+  # Template menggambarkan pods yang akan dibuat.
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+
+      # Durasi opsional dalam detik yang dibutuhkan pod untuk berhenti dengan baik.
+      terminationGracePeriodSeconds: 10
+
+      # Daftar kontainer yang dimiliki pod
+      containers:
+
+        # Nama kontainer
+        - name: mongo
+          # Gambar yang akan digunakan untuk kontainer. Ini akan menarik dari Docker Hub
+          image: mongo:3
+          # Kebijakan pengambilan gambar. "IfNotPresent" berarti bahwa kubelet mengambil jika gambar tidak ada di disk
+          imagePullPolicy: IfNotPresent
+          # Daftar variabel lingkungan untuk diatur di dalam kontainer
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME_FILE
+              value: /etc/mongo-credentials/MONGO_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD_FILE
+              value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD
+
+          # Daftar variabel lingkungan untuk diatur di dalam kontainer
+          ports:
+            # Jumlah port yang akan diexpose pada alamat IP pod
+            - containerPort: 27017
+              name: mongo
+          # Volume pod untuk dimount ke dalam sistem file kontainer
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+            - name: mongo-config
+              mountPath: /config
+            - name: mongo-secret
+              mountPath: /etc/mongo-credentials
+
+      # Daftar volume yang dapat dimount oleh kontainer yang dimiliki pod.
+      volumes:
+        # Nama volume sebagaimana dijelaskan pada "volumeMounts"
+        - name: mongo-persistent-storage
+          # Referensi ke PersistentVolumeClaim di namespace yang sama.
+          persistentVolumeClaim:
+            # Nama dari PersistentVolumeClaim di namespace yang sama dengan pod yang menggunakan volume ini
+            claimName: mongo-pv-claim
+        - name: mongo-config
+          # Mewakili configMap yang harus mengisi volume ini
+          configMap:
+            name: mongo-config
+            items:
+              - key: mongo.conf
+                path: mongo.conf
+        - name: mongo-secret
+          # Mewakili secret yang harus mengisi volume ini.
+          secret:
+            secretName: mongo-secret

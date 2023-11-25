@@ -1,0 +1,19 @@
+# Versi API
+apiVersion: v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# ConfigMap menyimpan data konfigurasi yang akan dikonsumsi oleh pods.
+kind: ConfigMap
+
+metadata:
+  # Nama ConfigMap
+  name: mongo-config
+  # Namespace ConfigMap
+  namespace: karsajobs-ns
+
+# Data berisi data konfigurasi
+data:
+  # Nama konfigurasi yang akan dibuat
+  mongo.conf: |
+    storage:
+      dbpath: /data/db

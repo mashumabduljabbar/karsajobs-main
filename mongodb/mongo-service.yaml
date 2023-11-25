@@ -1,0 +1,26 @@
+# Versi API
+apiVersion: v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# Service adalah abstraksi bernama dari layanan perangkat lunak
+kind: Service
+
+metadata:
+  # Nama layanan
+  name: mongo
+  # Namespace Deployment
+  namespace: karsajobs-ns
+  # Peta kunci dan nilai string yang dapat digunakan untuk mengorganisir dan mengkategorikan (lingkup dan pilih) objek.
+  labels:
+    app: mongo
+
+spec:
+  # Selektor label untuk pods
+  selector:
+    app: mongo
+  # Daftar port yang diexpose oleh layanan ini.
+  ports:
+    # Port yang akan diexpose oleh layanan ini.
+    - port: 27017
+  # Alamat IP layanan dan biasanya diberikan secara acak
+  clusterIP: None

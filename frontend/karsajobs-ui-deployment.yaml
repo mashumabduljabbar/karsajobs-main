@@ -1,0 +1,56 @@
+# Versi API
+apiVersion: apps/v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# "Deployment" memungkinkan pembaruan deklaratif untuk Pods dan ReplicaSets.
+kind: Deployment
+
+metadata:
+  # Nama Deployment
+  name: karsajobs-ui
+  # Namespace Deployment
+  namespace: karsajobs-ns
+  # Label Deployment
+  labels:
+    app: frontend
+
+spec:
+  # Jumlah pods yang diinginkan. Ini adalah penunjuk untuk membedakan antara nol eksplisit dan tidak ditentukan. Default ke 1.
+  replicas: 1
+  # Selektor label untuk pods
+  selector:
+    matchLabels:
+      app: frontend
+
+  # Template menggambarkan pods yang akan dibuat.
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      # Daftar kontainer yang dimiliki pod
+      containers:
+        # Nama kontainer
+        - name: karsajobs-ui
+          # Gambar yang akan digunakan untuk kontainer
+          image: mashumjabbar/karsajobs-ui:latest
+          # Kebijakan pengambilan gambar. "IfNotPresent" berarti bahwa kubelet mengambil jika gambar tidak ada di disk
+          imagePullPolicy: IfNotPresent
+          # Sumber Daya Komputasi yang diperlukan oleh kontainer ini
+          resources:
+            # Batas menggambarkan jumlah maksimum sumber daya komputasi yang diizinkan
+            limits:
+              # Memory/RAM yang akan digunakan. "1Gi" berarti 1 Gigabyte
+              memory: "1Gi"
+              # Ukuran CPU yang akan digunakan. "750m" berarti hanya menggunakan 3/4 dari ukuran CPU
+              cpu: "750m"
+          # Daftar port yang akan diexpose dari kontainer
+          ports:
+            # Jumlah port yang akan diexpose pada alamat IP pod
+            - containerPort: 8000
+          # Daftar variabel lingkungan untuk diatur di dalam kontainer
+          env:
+            - name: VUE_APP_BACKEND
+              # Ubah nilai ini menjadi IP dan port tempat backend Anda berjalan
+              value: http://127.0.0.1:51252

@@ -1,0 +1,76 @@
+# Versi API
+apiVersion: apps/v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# "Deployment" memungkinkan pembaruan deklaratif untuk Pods dan ReplicaSets.
+kind: Deployment
+
+metadata:
+
+  # Nama Deployment
+  name: karsajobs
+
+  # Namespace Deployment
+  namespace: karsajobs-ns
+
+  # key: string value yang dapat digunakan untuk mengorganisir dan mengkategorikan (lingkup dan pilih) objek. Dapat cocok dengan pemilih kontrol replikasi dan layanan.
+  labels:
+    app: backend
+spec:
+
+  # Jumlah pods yang diinginkan. Ini adalah penunjuk untuk membedakan antara nol eksplisit dan tidak ditentukan. Default ke 1.
+  replicas: 3
+
+  # Selektor label untuk pods
+  selector:
+    matchLabels:
+      app: backend
+
+  # Template menggambarkan pods yang akan dibuat.
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+
+      # Daftar kontainer yang dimiliki pod
+      containers:
+
+        # Nama kontainer
+        - name: karsajobs
+          # Gambar yang akan digunakan untuk kontainer
+          image: mashumjabbar/karsajobs:latest
+          # Kebijakan pengambilan gambar. "IfNotPresent" berarti bahwa kubelet mengambil jika gambar tidak ada di disk
+          imagePullPolicy: IfNotPresent
+          # Sumber Daya Komputasi yang diperlukan oleh kontainer ini
+          resources:
+            # Batas menggambarkan jumlah maksimum sumber daya komputasi yang diizinkan
+            limits:
+              # Ukuran CPU yang akan digunakan. "250m" berarti hanya menggunakan 1/4 dari ukuran CPU
+              cpu: "250m"
+              # Memory/RAM yang akan digunakan. "256Mi" berarti 256 Megabyte
+              memory: "256Mi"
+          # Daftar port yang akan diexpose dari kontainer
+          ports:
+            # Jumlah port yang akan diexpose pada alamat IP pod
+            - containerPort: 8080
+          # Daftar variabel lingkungan untuk diatur di dalam kontainer
+          env:
+            - name: APP_PORT
+              value: "8080"
+            - name: MONGO_HOST
+              value: mongo
+            - name: MONGO_USER
+              # Sumber untuk nilai variabel lingkungan
+              valueFrom:
+                # Memilih kunci dari rahasia di namespace pod
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_USERNAME
+            - name: MONGO_PASS
+              # Sumber untuk nilai variabel lingkungan
+              valueFrom:
+                # Memilih kunci dari rahasia di namespace pod
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_PASSWORD

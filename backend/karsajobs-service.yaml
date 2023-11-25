@@ -1,0 +1,25 @@
+# Versi API
+apiVersion: v1
+
+# Kind adalah nilai string yang mewakili sumber daya REST yang diwakili oleh objek ini
+# Service adalah abstraksi bernama dari layanan perangkat lunak
+kind: Service
+
+metadata:
+  # Nama layanan
+  name: karsajobs
+  # Namespace Deployment
+  namespace: karsajobs-ns
+  # key: string value yang dapat digunakan untuk mengorganisir dan mengkategorikan (lingkup dan pilih) objek.
+  labels:
+    app: backend
+spec:
+  # Selektor label untuk pods
+  selector:
+    app: backend
+  # Daftar port yang diexpose oleh layanan ini.
+  ports:
+    # Port yang akan diexpose oleh layanan ini.
+    - port: 8080
+  # Tipe layanan yang akan diexpose
+  type: NodePort
